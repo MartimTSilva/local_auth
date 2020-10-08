@@ -20,6 +20,7 @@ import io.flutter.plugin.common.MethodChannel.Result;
 import io.flutter.plugins.localauth.AuthenticationHelper.AuthCompletionHandler;
 import java.util.ArrayList;
 import java.util.concurrent.atomic.AtomicBoolean;
+import androidx.core.hardware.fingerprint.FingerprintManagerCompat;
 
 /**
  * Flutter plugin providing access to local authentication.
@@ -126,8 +127,9 @@ public class LocalAuthPlugin implements MethodCallHandler, FlutterPlugin, Activi
         }
         ArrayList<String> biometrics = new ArrayList<String>();
         PackageManager packageManager = activity.getPackageManager();
-        if (Build.VERSION.SDK_INT >= 23) {
-          if (packageManager.hasSystemFeature(PackageManager.FEATURE_FINGERPRINT)) {
+        FingerprintManagerCompat fingerprintMgr = FingerprintManagerCompat.from(activity);
+        if (fingerprintMgr.isHardwareDetected()) {
+          if (fingerprintMgr.hasEnrolledFingerprints()) {
             biometrics.add("fingerprint");
           }
         }
